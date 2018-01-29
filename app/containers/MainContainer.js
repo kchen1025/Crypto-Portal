@@ -3,7 +3,7 @@ import Home from '../components/Home';
 import {connect} from 'react-redux';
 
 import { fetchUser } from "../actions/userActions"
-
+import '../../public/style/style.scss';
 
 @connect((store)=>{
   return{
