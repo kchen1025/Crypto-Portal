@@ -19,18 +19,16 @@ class MainContainer extends Component {
 
 	}
   componentWillMount() {
-    this.props.dispatch(fetchUser())
+    // this.props.dispatch(fetchUser())
   }
 
 
   render () {
-    console.log(this.props.user);
     return (
       <div>
         <div>
           <Home/>
         </div>
-        blah
         {this.props.children}
       </div>
     );
