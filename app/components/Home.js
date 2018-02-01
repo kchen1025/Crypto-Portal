@@ -7,8 +7,8 @@ class Home extends Component {
 	return (
       <div className="container">
         <div id="child1">dsfdfdsfsdfsdfsdsdf</div>
-        <div id="child2">dsfdfdsfsdfsdfsdsdf</div>
-        <div id="child3">dsfdfdsfsdfsdfsdsdf</div>
+        <div id="child2">ddyeezy</div>
+        <div id="child3">dsfdfdsdeeznutsfsdfsdfsdsdf</div>
       </div>
     )
   };

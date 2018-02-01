@@ -1,8 +1,19 @@
+var webpack = require('webpack');
+
+
 module.exports = {
-  entry: './app/app.js',
+  entry: ['webpack-hot-middleware/client','react-hot-loader/patch','./app/app.js'],
+  plugins:[
+    // OccurenceOrderPlugin is needed for webpack 1.x only
+    new webpack.optimize.OccurenceOrderPlugin(),
+    new webpack.HotModuleReplacementPlugin(),
+    
+  ],
   output: {
     path: __dirname,
-    filename: './public/bundle.js'
+    filename: './public/bundle.js',
+    hotUpdateChunkFilename:'hot/hot-update.js',
+    hotUpdateMainFilename: 'hot/hot-update.json'
   },
   resolve: {
     root: __dirname,
@@ -18,12 +29,13 @@ module.exports = {
   module: {
     loaders: [
       {
-        loader: 'babel-loader',
+        loader: ['babel-loader'],
         query: {
           presets: ['react', 'es2015', 'stage-0'],
           plugins: ['transform-decorators-legacy']
         },
         test: /\.jsx?$/,
+        use: ['react-hot-loader/webpack'],
         exclude: /(node_modules|bower_components)/
       }, {
         test: /\.json$/,

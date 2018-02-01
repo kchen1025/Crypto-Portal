@@ -1,4 +1,10 @@
 var express = require('express');
+var webpack = require('webpack');
+var webpackConfig = require('./webpack.config.js');
+var compiler = webpack(webpackConfig);
+
+
+
 // Create express app
 var app = express();
 // Use the environment's port, 8080 ass the default port
@@ -11,6 +17,13 @@ app.use(function(req, res, next) {
     next();
   }
 });
+
+app.use(require("webpack-dev-middleware")(compiler,{
+  noInfo: true, publicPath: webpackConfig.output.publicPath
+}));
+
+app.use(require("webpack-hot-middleware")(compiler));
+
 
 app.use(express.static('public'));
 
