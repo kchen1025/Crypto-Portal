@@ -6,6 +6,20 @@
     justify-content: flex-end;
 }
 
+.openSidebar{
+    font-size:50px;
+    transition:0.2s color;
+
+    &:hover{
+        color:red;
+    }
+
+    &:active{
+        color:yellow;
+    }
+}
+
+
 /* Medium screens */
 @media all and (max-width: 800px) {
     .container {
@@ -23,7 +37,7 @@
 }
 
 #child1{
-    background-color:magenta;
+    background-color:red;
     order:3;
 
 }

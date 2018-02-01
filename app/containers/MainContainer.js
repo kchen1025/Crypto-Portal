@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Home from '../components/Home';
 import {connect} from 'react-redux';
 
 import { fetchUser } from "../actions/userActions"
@@ -19,16 +18,13 @@ class MainContainer extends Component {
 
 	}
   componentWillMount() {
-    // this.props.dispatch(fetchUser())
+    
   }
 
 
   render () {
     return (
       <div>
-        <div>
-          <Home/>
-        </div>
         {this.props.children}
       </div>
     );
