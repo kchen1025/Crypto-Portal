@@ -1,8 +1,33 @@
+require('dotenv').config({path:__dirname+'/credentials.env'})
 var express = require('express');
 var webpack = require('webpack');
 var webpackConfig = require('./webpack.config.js');
 var compiler = webpack(webpackConfig);
+var querystring = require('querystring');
+var request = require('request');
+var cookieParser = require('cookie-parser');
 
+//these are used by spotify api, and are specific to my own developer account 
+var client_id = process.env.CLIENT_ID; // Your client id
+var client_secret = process.env.CLIENT_SECRET; // Your secret
+var redirect_uri = process.env.REDIRECT_URI; // Your redirect uri
+
+var stateKey = 'spotify_auth_state';
+
+/**
+ * Generates a random string containing numbers and letters
+ * @param  {number} length The length of the string
+ * @return {string} The generated string
+ */
+var generateRandomString = function(length) {
+  var text = '';
+  var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+  for (var i = 0; i < length; i++) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+};
 
 
 // Create express app
@@ -24,8 +49,89 @@ app.use(require("webpack-dev-middleware")(compiler,{
 
 app.use(require("webpack-hot-middleware")(compiler));
 
+app.use(express.static('public'))
+    .use(cookieParser());
 
-app.use(express.static('public'));
+
+app.get('/login', function(req,res){
+  var state = generateRandomString(16);
+  res.cookie(stateKey, state);
+
+  //you application requests authorization from spotify
+  var scope = 'user-read-private user-read-email';
+  res.redirect('https://accounts.spotify.com/authorize?'+
+    querystring.stringify({
+      response_type: 'code',
+      client_id: client_id,
+      scope:scope,
+      redirect_uri: redirect_uri,
+      state:state
+    })
+  )
+})
+
+app.get('/callback',function(req,res){
+
+  //your application requests refresh and access tokens 
+  //after checking the state parameter
+  var code = req.query.code || null;
+  var state = req.query.state || null;
+  var storedState = req.cookies ? req.cookies[stateKey] : null;
+  
+  console.log('state',state)
+  console.log('storedstate',storedState)
+
+  if(state === null || state !== storedState){
+    res.redirect('/#'+
+      querystring.stringify({
+        error: 'state_mismatch'
+      }))
+  }
+  else{
+    res.clearCookie(stateKey);
+    var authOptions = {
+      url: 'https://accounts.spotify.com/api/token',
+      form:{
+        code:code,
+        redirect_uri: redirect_uri,
+        grant_type: 'authorization_code'
+      },
+      headers: {
+        'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+      },
+      json:true
+    };  
+  
+
+
+  request.post(authOptions, function(error, response, body){
+    console.log(response.statusCode)
+    if(!error && response.statusCode === 200){
+      var access_token = body.access_token,
+          refresh_token = body.refresh_token;
+
+      var options = {
+        url: 'https://api.spotify.com/v1/me',
+        headers: {'Authorization': 'Bearer ' + access_token},
+        json: true
+      }
+      
+      //use the access token to access the spotify web api
+      request.get(options, function(error, response, body){
+        console.log(body)
+      })
+
+      // pass the token to browser to make more requests
+    }
+    else{
+      console.log('rejected')
+    }
+  })
+
+  }
+
+})
+
 
 app.listen(PORT, function () {
   console.log('Express server is up on port ' + PORT);

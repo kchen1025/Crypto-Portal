@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import styles from './Home.scss';
 
 import Sidebar from 'react-sidebar';
+import axios from 'axios';
 
 
 class Home extends Component {
@@ -19,22 +20,16 @@ class Home extends Component {
     this.setState({sidebarOpen:!this.state.sidebarOpen});
   }
 
+  loginSpotify(){
+    
+  }
+
   render() {
-    var sidebarContent = (<div>Sidebar Content</div>);
 
     return (
-        <Sidebar sidebar={sidebarContent}
-                  open={this.state.sidebarOpen}
-                  onSetOpen={this.onSetSidebarOpen}>
-          <i className="ion-navicon-round openSidebar"
-              onClick={this.onSetSidebarOpen.bind(this)}></i>
-          <div className="container">
-            <div id="child1">dsfdfdsfsdfsdfsdsdf</div>
-            <div id="child2">ddyeezy</div>
-            <div id="child3">dsfdfdsdeeznutsfsdfsdfsdsdf</div>
-          </div>
-        </Sidebar>
-        
+        <div> 
+          <button onClick={this.loginSpotify.bind(this)}>authenticate your shit mang</button>
+        </div>
       )
   };
 };
