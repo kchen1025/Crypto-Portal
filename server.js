@@ -6,6 +6,9 @@ var compiler = webpack(webpackConfig);
 var querystring = require('querystring');
 var request = require('request');
 var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+var cors = require('cors');
+
 
 //these are used by spotify api, and are specific to my own developer account 
 var client_id = process.env.CLIENT_ID; // Your client id
@@ -32,34 +35,41 @@ var generateRandomString = function(length) {
 
 // Create express app
 var app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(cors())
+
+var router = express.Router();
 // Use the environment's port, 8080 ass the default port
 var PORT = process.env.PORT || 8080;
 
-app.use(function(req, res, next) {
-  if(req.headers['x-forwarded-proto'] === 'http') {
-    res.redirect('http://' + req.hostname + req.url);
-  } else {
-    next();
-  }
+
+app.use(function(req,res,next){
+  console.log('middleware')
+  res.setHeader("Access-Control-Allow-Origin", '*');
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+  res.setHeader("Access-Control-Allow-Headers","X-Requested-With, content-type");
+  res.setHeader("Access-Control-Allow-Credentials",true);
+  next();
+  // if(req.headers['x-forwarded-proto'] === 'http') {
+  //   res.redirect('http://' + req.hostname + req.url);
+  // } else {
+  //   next();
+  // }
 });
-
-app.use(require("webpack-dev-middleware")(compiler,{
-  noInfo: true, publicPath: webpackConfig.output.publicPath
-}));
-
-app.use(require("webpack-hot-middleware")(compiler));
 
 app.use(express.static('public'))
     .use(cookieParser());
 
 
+
 app.get('/login', function(req,res){
   var state = generateRandomString(16);
   res.cookie(stateKey, state);
-
+  console.log('yeety')
   //you application requests authorization from spotify
   var scope = 'user-read-private user-read-email';
-  res.redirect('https://accounts.spotify.com/authorize?'+
+  var url = 'https://accounts.spotify.com/authorize?'+
     querystring.stringify({
       response_type: 'code',
       client_id: client_id,
@@ -67,7 +77,9 @@ app.get('/login', function(req,res){
       redirect_uri: redirect_uri,
       state:state
     })
-  )
+    
+  console.log(url)
+  res.redirect(url)
 })
 
 app.get('/callback',function(req,res){
@@ -105,7 +117,6 @@ app.get('/callback',function(req,res){
 
 
   request.post(authOptions, function(error, response, body){
-    console.log(response.statusCode)
     if(!error && response.statusCode === 200){
       var access_token = body.access_token,
           refresh_token = body.refresh_token;

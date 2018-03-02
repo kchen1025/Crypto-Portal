@@ -20,15 +20,19 @@ class Home extends Component {
     this.setState({sidebarOpen:!this.state.sidebarOpen});
   }
 
-  loginSpotify(){
-    
-  }
+  // loginSpotify(){
+  //   axios.get('/login')
+  //   .then((response)=>{
+  //     console.log(response)
+  //   })
+  // }
 
   render() {
 
     return (
         <div> 
-          <button onClick={this.loginSpotify.bind(this)}>authenticate your shit mang</button>
+          {/* <button onClick={this.loginSpotify.bind(this)}>authenticate your shit mang</button> */}
+          <a href='/login'>no way</a>
         </div>
       )
   };
