@@ -19,18 +19,6 @@ ReactDOM.render(
 );	
 
 
-if(module.hot){
-	module.hot.accept('./containers/MainContainer',()=>{
-		const NextRootContainer = require('./containers/MainContainer.js').default;
-		ReactDOM.render(
-			<Provider store={store}>
-				<Router history={browserHistory} routes={routes}/>
-			</Provider>,
-			document.getElementById('app')
-		);	
-	})
-	
-}
 
 
 

@@ -4,12 +4,7 @@ import {connect} from 'react-redux';
 import { fetchUser } from "../actions/userActions"
 import '../../public/style/style.scss';
 
-@connect((store)=>{
-  return{
-    user: store.user.user,
-    userFetched: store.user.fetched
-  }
-})
+
 class MainContainer extends Component {
 
   // Set initial state

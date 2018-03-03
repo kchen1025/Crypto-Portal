@@ -1,9 +1,11 @@
 import { combineReducers } from "redux"
 
-import user from "./userReducer"
+import userReducer from "./userReducer.js"
+import tokenReducer from './tokenReducer.js'
 
 
 //this combines all the reducers into one that is passed to the store
 export default combineReducers({
-  user
+  userReducer,
+  tokenReducer
 })
